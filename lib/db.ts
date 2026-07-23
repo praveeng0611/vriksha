@@ -1,7 +1,22 @@
 import { Pool } from 'pg'
 
+// Strip sslmode from URL — newer pg treats sslmode=require as verify-full,
+// overriding our rejectUnauthorized:false. Explicit ssl option takes effect
+// once sslmode is absent from the connection string.
+function stripSslMode(url: string): string {
+  try {
+    const u = new URL(url)
+    u.searchParams.delete('sslmode')
+    return u.toString()
+  } catch {
+    return url.replace(/[?&]sslmode=[^&]*/g, '').replace(/[?&]$/, '')
+  }
+}
+
 const pool = new Pool({
-  connectionString: process.env.POSTGRES_URL,
+  connectionString: stripSslMode(
+    process.env.POSTGRES_URL_NON_POOLING || process.env.POSTGRES_URL || ''
+  ),
   ssl: { rejectUnauthorized: false },
   max: 10,
 })
