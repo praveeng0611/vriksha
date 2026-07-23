@@ -144,3 +144,38 @@ export interface DashboardStats {
   reminders_today: number
   recent_trees: Tree[]
 }
+
+export type SaplingCondition = 'healthy' | 'weak' | 'diseased' | 'dormant'
+export type WishlistPriority = 'high' | 'medium' | 'low'
+export type AcquisitionStatus = 'wanted' | 'sourcing' | 'acquired'
+
+export interface NurseryInventory {
+  id: number
+  species_id: number | null
+  common_name: string
+  scientific_name: string | null
+  quantity: number
+  batch_name: string | null
+  source: string | null
+  received_date: string | null
+  condition: SaplingCondition
+  project_id: number | null
+  project_name?: string
+  notes: string | null
+  created_by: string | null
+  created_at: string
+  updated_at: string
+}
+
+export interface PlantWishlist {
+  id: number
+  common_name: string
+  scientific_name: string | null
+  family: string | null
+  reason: string | null
+  priority: WishlistPriority
+  target_quantity: number | null
+  acquisition_status: AcquisitionStatus
+  notes: string | null
+  created_at: string
+}

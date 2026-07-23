@@ -221,6 +221,42 @@ export async function initDB() {
     )
   `
 
+  // Nursery Sapling Inventory
+  await sql`
+    CREATE TABLE IF NOT EXISTS nursery_inventory (
+      id SERIAL PRIMARY KEY,
+      species_id INTEGER REFERENCES species(id) ON DELETE SET NULL,
+      common_name VARCHAR(200) NOT NULL,
+      scientific_name VARCHAR(200),
+      quantity INTEGER NOT NULL DEFAULT 0,
+      batch_name VARCHAR(100),
+      source VARCHAR(200),
+      received_date DATE,
+      condition VARCHAR(20) DEFAULT 'healthy',
+      project_id INTEGER REFERENCES projects(id) ON DELETE SET NULL,
+      notes TEXT,
+      created_by INTEGER REFERENCES users(id) ON DELETE SET NULL,
+      created_at TIMESTAMPTZ DEFAULT NOW(),
+      updated_at TIMESTAMPTZ DEFAULT NOW()
+    )
+  `
+
+  // Plant Wishlist (preferred nursery catalog)
+  await sql`
+    CREATE TABLE IF NOT EXISTS plant_wishlist (
+      id SERIAL PRIMARY KEY,
+      common_name VARCHAR(200) NOT NULL,
+      scientific_name VARCHAR(200),
+      family VARCHAR(200),
+      reason TEXT,
+      priority VARCHAR(10) DEFAULT 'medium',
+      target_quantity INTEGER,
+      acquisition_status VARCHAR(20) DEFAULT 'wanted',
+      notes TEXT,
+      created_at TIMESTAMPTZ DEFAULT NOW()
+    )
+  `
+
   // Seed default admin if no users exist
   const { rows } = await sql`SELECT COUNT(*) as cnt FROM users`
   if (parseInt((rows[0] as any).cnt) === 0) {
